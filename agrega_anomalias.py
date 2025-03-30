@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-def agregar_anomalias(archivo="asistencia_empleados.csv"):
+def agregar_anomalias(archivo):
     """Modifica el archivo de asistencia agregando anomalías específicas."""
 
     # Cargar el archivo CSV
@@ -55,6 +55,6 @@ def agregar_anomalias(archivo="asistencia_empleados.csv"):
             dia_falta = np.random.choice(['Monday', 'Friday'])
             df.loc[(df['empleado_id'] == emp) & (df['dia_semana'] == dia_falta), ['asistencia', 'hora_entrada', 'hora_salida', 'tipo_ausencia']] = [0, '-', '-', 'Alarga fin de semana']
 
-    # Guardar cambios en el mismo archivo
-    df.to_csv(archivo, index=False)
+    # Guardar cambios en archivo con nombre extendido '_anomalo'
+    df.to_csv(archivo[:-4] + "_anomalo.csv", index=False)
     print(f"---> Se han agregado anomalías al archivo '{archivo}'")

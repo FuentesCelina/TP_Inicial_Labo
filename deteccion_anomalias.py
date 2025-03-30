@@ -15,7 +15,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 
-def cargar_datos(archivo="asistencia_empleados.csv"):
+def cargar_datos(archivo):
     """Carga el dataset de asistencia desde un archivo CSV."""
     df = pd.read_csv(archivo)
 
@@ -63,6 +63,11 @@ def entrenar_isolation_forest(df):
 
 def detectar_anomalias(model, df):
     """Detecta anomalías en el dataset usando el modelo entrenado."""
+
+     # Convertir valores no numéricos a cetegorías ***** BUG CORREGIDO
+    df['dia_semana'] = df['dia_semana'].astype('category').cat.codes
+    df['tipo_ausencia'] = df['tipo_ausencia'].astype('category').cat.codes
+
     X = df[['dia_semana', 'asistencia', 'min_entrada', 'min_salida', 'tipo_ausencia']]
 
     # Predecir anomalías
