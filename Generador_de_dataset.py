@@ -11,6 +11,7 @@
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
+import agregar_anomalias
 
 def minutos_random_desfasar(antes, despues):
     return np.random.randint(-antes, despues)
@@ -44,7 +45,6 @@ data = []
 
 # Generar datos para cada empleado
 for emp_id in range(1, CANT_EMPLEADOS + 1):
-    faltas_consecutivas = 0  # Contador de faltas seguidas
     for fecha in FECHAS:
         dia_semana = fecha.strftime("%A")  # Día de la semana
 
@@ -55,20 +55,19 @@ for emp_id in range(1, CANT_EMPLEADOS + 1):
                 hora_entrada = (HORA_ENTRADA + timedelta(minutes = minutos_random_desfasar(MIN_LLEGA_ANTES, MIN_LLEGA_TARDE))).strftime("%H:%M")
                 hora_salida = (HORA_SALIDA + timedelta(minutes = minutos_random_desfasar(-MIN_SE_RETIRA_ANTES, MIN_SE_RETIRA_TARDE))).strftime("%H:%M")
                 tipo_ausencia = "Ninguna"
-                faltas_consecutivas = 0  # Reiniciar el contador
             else:
                 hora_entrada = "-"
                 hora_salida = "-"
                 tipo_ausencia = np.random.choice(["Falta injustificada", "Enfermedad", "Franco"], p=[INJUSTIFICADA, ENFERMEDAD, FRANCO])
-                faltas_consecutivas += 1  # Aumentar el contador
 
-            data.append([emp_id, fecha.strftime("%Y-%m-%d"), dia_semana, asistencia, hora_entrada, hora_salida, tipo_ausencia, faltas_consecutivas])
+            data.append([emp_id, fecha.strftime("%Y-%m-%d"), dia_semana, asistencia, hora_entrada, hora_salida, tipo_ausencia])
 
 # Convertir a DataFrame
-df = pd.DataFrame(data, columns=["empleado_id", "fecha", "dia_semana", "asistencia", "hora_entrada", "hora_salida", "tipo_ausencia", "faltas_consecutivas"])
-
-# Mostrar las primeras filas
-print(df.head())
+df = pd.DataFrame(data, columns=["empleado_id", "fecha", "dia_semana", "asistencia", "hora_entrada", "hora_salida", "tipo_ausencia"])
 
 # Guardar en CSV
 df.to_csv("asistencia_empleados.csv", index=False)
+print("----> Se ha generado el archivo 'asistencia_empleados.csv'")
+
+# Al archivo generado, le agrega empleados con asistencia anómala
+agregar_anomalias.agregar_anomalias("asistencia_empleados.csv")
