@@ -1,13 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:        generador_de_dataset
-# Purpose:     generar datos aleatorios de empleados y sus asistencias
-#
-# Author:      jorge
-#
-# Created:     29/03/2025
-# Copyright:   (c) jorge 2025
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
