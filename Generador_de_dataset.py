@@ -1,46 +1,34 @@
-#-------------------------------------------------------------------------------
-# Name:        generador_de_dataset
-# Purpose:     generar datos aleatorios de empleados y sus asistencias
-#
-# Author:      jorge
-#
-# Created:     29/03/2025
-# Copyright:   (c) jorge 2025
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import agrega_anomalias
 
+# Cantidad de empleados
+CANT_EMPLEADOS = 100
+# Cantidad de días corridos, fecha de inicio, días que no se trabaja
+CANT_DIAS = 120
+FECHAS = pd.date_range(start="2025-01-01", periods=CANT_DIAS)
+DIAS_NO_LABORABLES = ['Saturday', 'Sunday']
+# Horario de entrada y salida
+HORA_ENTRADA = datetime.strptime("08:00", "%H:%M")
+HORA_SALIDA = datetime.strptime("17:00", "%H:%M")
+# Tolerancias normales en minutos
+MIN_LLEGA_ANTES = 15
+MIN_SE_RETIRA_ANTES = 5
+MIN_LLEGA_TARDE = 5
+MIN_SE_RETIRA_TARDE = 15
+# Proporciones
+PROB_ASISTENCIA = 0.85  # Probabilidad de que un empleado asista
+INJUSTIFICADA = 0.3  # Causas de inasistencia
+ENFERMEDAD = 0.5
+FRANCO = 0.2
+
+
 def minutos_random_desfasar(antes, despues):
     return np.random.randint(-antes, despues)
 
 def generar_dataset():
-    # Cantidad de empleados
-    CANT_EMPLEADOS = 100
-    # Cantidad de días corridos, fecha de inicio, días que no se trabaja
-    CANT_DIAS = 120
-    FECHAS = pd.date_range(start="2025-01-01", periods=CANT_DIAS)
-    DIAS_NO_LABORABLES = ['Saturday', 'Sunday']
-
-    # Horario de entrada y salida
-    HORA_ENTRADA = datetime.strptime("08:00", "%H:%M")
-    HORA_SALIDA = datetime.strptime("17:00", "%H:%M")
-
-    # Tolerancias normales en minutos
-    MIN_LLEGA_ANTES = 15
-    MIN_SE_RETIRA_ANTES = 5
-    MIN_LLEGA_TARDE = 5
-    MIN_SE_RETIRA_TARDE = 15
-
-    # Proporciones
-    PROB_ASISTENCIA = 0.85  # Probabilidad de que un empleado asista
-
-    INJUSTIFICADA = 0.3  # Causas de inasistencia
-    ENFERMEDAD = 0.5
-    FRANCO = 0.2
-
+    
     # Lista para almacenar los registros
     data = []
 

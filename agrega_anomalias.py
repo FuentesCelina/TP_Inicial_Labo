@@ -1,33 +1,20 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      jorge
-#
-# Created:     30/03/2025
-# Copyright:   (c) jorge 2025
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
-
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
+# Probabilidades y parámetros
+prob_llegada_tarde =prob_salida_temprano=prob_faltar_lunes_viernes=0.05
+prob_faltas_consecutivas = 0.03
+
+"""Modifica el archivo de asistencia agregando anomalías específicas."""
 def agregar_anomalias(archivo="asistencia_empleados.csv"):
-    """Modifica el archivo de asistencia agregando anomalías específicas."""
 
     # Cargar el archivo CSV
     df = pd.read_csv(archivo)
 
-    # Probabilidades y parámetros
-    prob_llegada_tarde = 0.05
-    prob_salida_temprano = 0.05
-    prob_faltas_consecutivas = 0.03
-    prob_faltar_lunes_viernes = 0.05
-
     # Convertir a formato datetime
     df['fecha'] = pd.to_datetime(df['fecha'])
-
+    
     # Anomalía 1: Empleados con llegadas demasiado tarde
     for index, row in df.iterrows():
         if row['asistencia'] == 1 and np.random.rand() < prob_llegada_tarde:
