@@ -10,13 +10,20 @@ document.addEventListener("DOMContentLoaded", function () {
         loader.setAttribute("role", "status");
         loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
         
-        // Agregar loader al DOM
+        // Insert loader into the DOM
         ejecutarBtn.parentNode.appendChild(loader);
         
-        // Ocultar loader por timeout
+        // After timeout, replace loader with "Reporte generado!"
         setTimeout(() => {
             loader.remove();
-            ejecutarBtn.style.display = "inline-block";
+            const message = document.createElement("p");
+            message.className = "mt-1 text-success-emphasis fw-bold";
+            message.textContent = "📄 Reporte generado!";
+            ejecutarBtn.parentNode.appendChild(message);
         }, 3000);
     });
 });
+
+function runPython() {
+    
+}
