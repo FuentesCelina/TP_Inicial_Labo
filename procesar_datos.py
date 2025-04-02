@@ -57,21 +57,7 @@ def entrenar_isolation_forest(df):
 
     return model
 
-def detectar_filas_anomalas(model, df):
-    """Detecta filas anómalas en el dataset."""
-
-    X = df[['tipo_ausencia', 'faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
-
-    # Predecir anomalías
-    df['anomalia'] = model.predict(X)
-    df['anomalia'] = df['anomalia'].apply(lambda x: 1 if x == -1 else 0)
-
-    # Filtrar filas anómalos
-    df_filas_anomalas = df[df['anomalia'] == 1]
-
-    return df_filas_anomalas
-
-def resumir_datos_anomalos(df):
+def resumir_datos_asistencia(df):
     """Genera un resumen de asistencia por empleado y lo guarda en un archivo CSV."""
     resumen = df.groupby('empleado_id').agg(
         faltas_acumuladas=('faltas_acumuladas', 'max'),
@@ -129,4 +115,3 @@ def detectar_peores_empleados(df, porcentaje, archivo_destino):
     df_peores.to_csv(archivo_destino, index=False)
 
     print("Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
-
