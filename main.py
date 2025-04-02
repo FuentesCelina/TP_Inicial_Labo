@@ -2,37 +2,31 @@ def main():
 
     import generador_de_dataset
     import agrega_anomalias
-    #import deteccion_anomalias
-    import anomaly_detection
+    import procesar_datos
 
     # Generar archivo CSV usado como dataset
-    generador_de_dataset.generar_dataset()
+    generador_de_dataset.generar_dataset("asistencia_empleados.csv")
 
     # Al archivo generado, le agrega empleados con asistencia anómala
-    #agrega_anomalias.agregar_anomalias("asistencia_empleados.csv")
     agrega_anomalias.agregar_anomalias("asistencia_empleados.csv")
 
-    # Cargar datos
-    #df_asistencia = deteccion_anomalias.cargar_datos()
-    df_asistencia = anomaly_detection.cargar_datos("asistencia_empleados.csv")
+    # Procesar datos
+    df_asistencia = procesar_datos.pre_procesar_datos("asistencia_empleados.csv")
 
     # Entrenar el modelo Isolation Forest
-    #modelo = deteccion_anomalias.entrenar_isolation_forest(df_asistencia)
-    modelo = anomaly_detection.entrenar_isolation_forest(df_asistencia)
+    modelo = procesar_datos.entrenar_isolation_forest(df_asistencia)
 
-    # Detectar anomalías en el dataset
-    #df_anomalos = deteccion_anomalias.detectar_anomalias(modelo, df_asistencia)
-    df_anomalos = anomaly_detection.detectar_anomalias(modelo, df_asistencia)
+    # Detectar filas anómalas
+    df_anomalos = procesar_datos.detectar_filas_anomalas(modelo, df_asistencia)
 
-    # Guardar los resultados
-    df_anomalos.to_csv("anomalos_detectados.csv", index=False)
-    print("\n----> Resultados guardados en 'anomalos_detectados.csv'")
+    # Generar DataFrame final, sólo con los datos relevantes
+    df_final = procesar_datos.resumir_datos_anomalos(df_anomalos)
 
-    # Generar resumen de asistencia
-    anomaly_detection.generar_resumen_asistencia(df_anomalos)
+    # Genera reporte de asistencias anómalas
+    procesar_datos.empleados_asistencia_anomala(df_final, "anomalias_de_asistencia.csv")
 
-    # Genera reporte de anomalías
-    anomaly_detection.empleados_asistencia_anomala("resumen_de_asistencia.csv")
+    # Detecta el porcentaje con peor cumplimiento
+    procesar_datos.detectar_peores_empleados(df_final, 20, "empleados_mas_incumplidores.csv")
 
 if __name__ == '__main__':
     main()
