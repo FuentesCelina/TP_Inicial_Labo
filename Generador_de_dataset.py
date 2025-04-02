@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-import agrega_anomalias
 
 # Cantidad de empleados
 CANT_EMPLEADOS = 100
@@ -17,28 +16,27 @@ MIN_LLEGA_ANTES = 15
 MIN_SE_RETIRA_ANTES = 5
 MIN_LLEGA_TARDE = 5
 MIN_SE_RETIRA_TARDE = 15
-# Proporciones
-PROB_ASISTENCIA = 0.85  # Probabilidad de que un empleado asista
-INJUSTIFICADA = 0.3  # Causas de inasistencia
+# Probabilidades de asistencia o ausencia
+PROB_ASISTENCIA = 0.85  
+INJUSTIFICADA = 0.3  
 ENFERMEDAD = 0.5
 FRANCO = 0.2
 
-
+#Proporciona minutos de desfase que nos van a servir para horario de ingreso o egreso de una horario
 def minutos_random_desfasar(antes, despues):
     return np.random.randint(-antes, despues)
 
 def generar_dataset():
-    
-    # Lista para almacenar los registros
-    data = []
+
+    data = []   # Lista para almacenar los registros
 
     # Generar datos para cada empleado
     for emp_id in range(1, CANT_EMPLEADOS + 1):
         for fecha in FECHAS:
-            dia_semana = fecha.strftime("%A")  # Día de la semana
+            dia_semana = fecha.strftime("%A")   # Día de la semana
 
             if dia_semana not in DIAS_NO_LABORABLES:
-                asistencia = np.random.choice([1, 0], p=[PROB_ASISTENCIA, 1 - PROB_ASISTENCIA])  # Asistencia aleatoria
+                asistencia = np.random.choice([1, 0], p=[PROB_ASISTENCIA, 1 - PROB_ASISTENCIA]) # Asistencia aleatoria
 
                 if asistencia == 1:
                     hora_entrada = (HORA_ENTRADA + timedelta(minutes = minutos_random_desfasar(MIN_LLEGA_ANTES, MIN_LLEGA_TARDE))).strftime("%H:%M")
