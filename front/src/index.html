@@ -152,9 +152,21 @@
     <p class="col-lg-6 mx-auto mb-4">
       Presiona el botón para aplicar el algoritmo de Isolation Forest y generar un dataset de resultados en formato CSV.
     </p>
-    <button onclick="runPython()" class="btn btn-primary px-5 mb-5" type="button">
+    <button onclick="fetchCSVData()" class="btn btn-primary px-5 mb-5" type="button">
       Ejecutar! ⚙️
     </button>
+
+    <table id="tableData" class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Empleado ID</th><th>Fecha</th><th>Día</th><th>Asistencia</th>
+          <th>Entrada</th><th>Salida</th><th>Tipo de Ausencia</th>
+          <th>Min Entrada</th><th>Min Salida</th><th>Anomalía</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+
   </div>
 </div>
 
