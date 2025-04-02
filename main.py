@@ -16,11 +16,8 @@ def main():
     # Entrenar el modelo Isolation Forest
     modelo = procesar_datos.entrenar_isolation_forest(df_asistencia)
 
-    # Detectar filas anómalas
-    df_anomalos = procesar_datos.detectar_filas_anomalas(modelo, df_asistencia)
-
     # Generar DataFrame final, sólo con los datos relevantes
-    df_final = procesar_datos.resumir_datos_anomalos(df_anomalos)
+    df_final = procesar_datos.resumir_datos_asistencia(df_asistencia)
 
     # Genera reporte de asistencias anómalas
     procesar_datos.empleados_asistencia_anomala(df_final, "anomalias_de_asistencia.csv")
