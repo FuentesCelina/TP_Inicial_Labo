@@ -1,22 +1,13 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      jorge
-#
-# Created:     30/03/2025
-# Copyright:   (c) jorge 2025
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
+import generador_de_dataset
+import agrega_anomalias
+import deteccion_anomalias
 
 def main():
     pass
 
 if __name__ == '__main__':
     main()
-import generador_de_dataset
-import agrega_anomalias
-import deteccion_anomalias
+
 
 # Generar archivo CSV usado como dataset
 generador_de_dataset.generar_dataset()
