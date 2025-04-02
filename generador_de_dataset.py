@@ -58,5 +58,5 @@ def generar_dataset(archivo):
 
     # Guardar en CSV
     df.to_csv(archivo, index=False)
-    print("---> Se ha generado el archivo '{archivo}'")
+    print(f"---> Se ha generado el archivo '{archivo}'")
     return
