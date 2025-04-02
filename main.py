@@ -3,12 +3,12 @@ def main():
 
 if __name__ == '__main__':
     main()
-import generador_de_dataset
+import Generador_de_dataset
 import agrega_anomalias
 import deteccion_anomalias
 
 # Generar archivo CSV usado como dataset
-generador_de_dataset.generar_dataset()
+Generador_de_dataset.generar_dataset()
 
 # Al archivo generado, le agrega empleados con asistencia anómala
 agrega_anomalias.agregar_anomalias("asistencia_empleados.csv")
