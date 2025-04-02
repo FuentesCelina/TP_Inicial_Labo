@@ -1,14 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      jorge
-#
-# Created:     30/03/2025
-# Copyright:   (c) jorge 2025
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
-
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
