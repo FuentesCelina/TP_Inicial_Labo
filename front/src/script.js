@@ -25,8 +25,16 @@ function fetchCSVData() {
   }
   
   function populateTable(data) {
+    const table = document.getElementById("tableData");
     const tableBody = document.getElementById("table-body");
+    
     tableBody.innerHTML = "";
+  
+    if (data.length > 0) {
+      table.style.display = "table"; // Mostrar la tabla solo si hay datos
+    } else {
+      table.style.display = "none"; // Ocultar la tabla si no hay datos
+    }
   
     data.forEach((row) => {
       console.log("Row Data:", row); // debug

@@ -104,3 +104,8 @@
   display: block !important;
 }
 /* End Cards styles */
+
+
+#tableData {
+  display: none;
+}
