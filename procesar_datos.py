@@ -70,4 +70,4 @@ def detectar_peores_empleados(df, porcentaje, archivo_destino):
     # Guardar el resultado en un nuevo archivo CSV
     df_peores.to_csv(archivo_destino, index=False)
 
-    print("Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+    print(----> "Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
