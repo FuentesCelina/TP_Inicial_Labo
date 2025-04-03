@@ -32,14 +32,11 @@ def agregar_anomalias(archivo="asistencia_empleados.csv"):
     # Anomalía 1: Empleados con llegadas demasiado tarde
     for index, row in df.iterrows():
         if row['asistencia'] == 1 and np.random.rand() < prob_llegada_tarde:
-            #df.at[index, 'hora_entrada'] = (datetime.strptime("09:30", "%H:%M")).strftime("%H:%M")
             df.at[index, 'hora_entrada'] = (HORA_ENTRADA + timedelta(minutes = _minutos_random_desfasar(MINUTOS_TOLERANCIA + 1, MINUTOS_LLEGA_TARDE))).strftime("%H:%M")
-
 
     # Anomalía 2: Empleados con salidas extremadamente temprano
     for index, row in df.iterrows():
         if row['asistencia'] == 1 and np.random.rand() < prob_salida_temprano:
-            #df.at[index, 'hora_salida'] = (datetime.strptime("15:00", "%H:%M")).strftime("%H:%M")
             df.at[index, 'hora_salida'] = (HORA_SALIDA - timedelta(minutes = _minutos_random_desfasar(MINUTOS_TOLERANCIA + 1, MINUTOS_SE_RETIRA_ANTES))).strftime("%H:%M")
 
     # Anomalía 3: Faltas consecutivas de 5 a 10 días
