@@ -36,9 +36,8 @@ def pre_procesar_datos(archivo):
 
     return df
 
-
 def resumir_datos_asistencia(df):
-    """Genera un resumen de asistencia por empleado y lo guarda en un archivo CSV."""
+    """Genera un resumen de asistencia por empleado, devuelve un DF procesado y lo guarda en un archivo CSV."""
     resumen = df.groupby('empleado_id').agg(
         faltas_acumuladas=('faltas_acumuladas', 'max'),
         faltas_seguidas=('faltas_seguidas', 'max'),
