@@ -43,15 +43,13 @@ function fetchCSVData() {
   
       tr.innerHTML = `
         <td>${row.empleado_id || "N/A"}</td>
-        <td>${row.fecha || "N/A"}</td>
-        <td>${row.dia_semana || "N/A"}</td>
-        <td>${row.asistencia || "N/A"}</td>
-        <td>${row.hora_entrada || "N/A"}</td>
-        <td>${row.hora_salida || "N/A"}</td>
-        <td>${row.tipo_ausencia || "N/A"}</td>
-        <td>${row.min_entrada || "N/A"}</td>
-        <td>${row.min_salida || "N/A"}</td>
+        <td>${row.faltas_acumuladas || "N/A"}</td>
+        <td>${row.faltas_seguidas || "N/A"}</td>
+        <td>${row.falta_lunes_viernes || "N/A"}</td>
+        <td>${row.llegada_tarde || "N/A"}</td>
+        <td>${row.retiro_temprano || "N/A"}</td>
         <td>${row.anomalia || "N/A"}</td>
+        <td>${row.anomaly_score || "N/A"}</td>
       `;
   
       tableBody.appendChild(tr);
