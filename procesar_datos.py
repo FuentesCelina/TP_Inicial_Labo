@@ -36,26 +36,6 @@ def pre_procesar_datos(archivo):
 
     return df
 
-def entrenar_isolation_forest(df):
-    """Entrena un modelo Isolation Forest para detectar anomalías en la asistencia."""
-
-    # Seleccionar características relevantes
-    X = df[['tipo_ausencia', 'faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
-
-    # Dividir en entrenamiento y prueba
-    X_train, X_test = train_test_split(X, test_size=0.2, random_state=42)
-
-    # Entrenar Isolation Forest
-    model = IsolationForest(contamination=0.2, random_state=42)
-    model.fit(X_train)
-
-    # Evaluar modelo
-    y_pred_test = model.predict(X_test)
-    y_pred_test = np.where(y_pred_test == -1, 1, 0)
-    print("\n* Reporte de clasificación en datos de prueba:")
-    print(classification_report(y_pred_test, np.zeros_like(y_pred_test)))
-
-    return model
 
 def resumir_datos_asistencia(df):
     """Genera un resumen de asistencia por empleado y lo guarda en un archivo CSV."""
@@ -71,29 +51,6 @@ def resumir_datos_asistencia(df):
     print("---> Archivo 'resumen_de_asistencia.csv' generado correctamente.")
 
     return resumen
-
-def empleados_asistencia_anomala(df, archivo_destino):
-    """Detecta todos los empleados con asistencia anómala y genera un archivo CSV."""
-
-    X = df[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
-
-    model = IsolationForest(contamination=0.2, random_state=42)
-    model.fit(X)
-    df['anomalia'] = model.predict(X)
-    df['anomalia'] = df['anomalia'].apply(lambda x: 1 if x == -1 else 0)
-
-    df_anomalo = df[df['anomalia'] == 1]
-
-    empleados_observados = {
-        'empleado_con_muchas_faltas_acumuladas': df_anomalo[df_anomalo['faltas_acumuladas'] > df['faltas_acumuladas'].median()]['empleado_id'].tolist(),
-        'empleado_con_faltas_seguidas': df_anomalo[df_anomalo['faltas_seguidas'] > df['faltas_seguidas'].median()]['empleado_id'].tolist(),
-        'empleado_falta_lunes_viernes': df_anomalo[df_anomalo['falta_lunes_viernes'] > 0]['empleado_id'].tolist(),
-        'empleado_llega_tarde': df_anomalo[df_anomalo['llegada_tarde'] > 0]['empleado_id'].tolist(),
-        'empleado_se_retira_antes': df_anomalo[df_anomalo['retiro_temprano'] > 0]['empleado_id'].tolist()
-    }
-
-    pd.DataFrame(dict([(k, pd.Series(v)) for k, v in empleados_observados.items()])).to_csv(archivo_destino, index=False)
-    print("----> Archivo '{archivo_destino}' generado correctamente.")
 
 def detectar_peores_empleados(df, porcentaje, archivo_destino):
     """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
