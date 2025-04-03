@@ -8,10 +8,9 @@ const app = express();
 const PORT = 3434;
 
 app.use(cors()); // CORS
-
 // Ruta para ejecutar el script Python
 app.get("/generate", (req, res) => {
-    parseCSV("./src/anomalos_detectados.csv")
+    parseCSV("./src/empleados_mas_incumplidores.csv")
       .then((jsonData) => 
         {
           console.log("jsonData: ", jsonData);

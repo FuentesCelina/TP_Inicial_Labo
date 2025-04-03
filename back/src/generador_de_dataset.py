@@ -1,22 +1,12 @@
-#-------------------------------------------------------------------------------
-# Name:        generador_de_dataset
-# Purpose:     generar datos aleatorios de empleados y sus asistencias
-#
-# Author:      jorge
-#
-# Created:     29/03/2025
-# Copyright:   (c) jorge 2025
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import agrega_anomalias
 
-def minutos_random_desfasar(antes, despues):
+def _minutos_random_desfasar(antes, despues):
     return np.random.randint(-antes, despues)
 
-def generar_dataset():
+def generar_dataset(archivo):
     # Cantidad de empleados
     CANT_EMPLEADOS = 100
     # Cantidad de días corridos, fecha de inicio, días que no se trabaja
@@ -53,8 +43,8 @@ def generar_dataset():
                 asistencia = np.random.choice([1, 0], p=[PROB_ASISTENCIA, 1 - PROB_ASISTENCIA])  # Asistencia aleatoria
 
                 if asistencia == 1:
-                    hora_entrada = (HORA_ENTRADA + timedelta(minutes = minutos_random_desfasar(MIN_LLEGA_ANTES, MIN_LLEGA_TARDE))).strftime("%H:%M")
-                    hora_salida = (HORA_SALIDA + timedelta(minutes = minutos_random_desfasar(-MIN_SE_RETIRA_ANTES, MIN_SE_RETIRA_TARDE))).strftime("%H:%M")
+                    hora_entrada = (HORA_ENTRADA + timedelta(minutes = _minutos_random_desfasar(MIN_LLEGA_ANTES, MIN_LLEGA_TARDE))).strftime("%H:%M")
+                    hora_salida = (HORA_SALIDA + timedelta(minutes = _minutos_random_desfasar(-MIN_SE_RETIRA_ANTES, MIN_SE_RETIRA_TARDE))).strftime("%H:%M")
                     tipo_ausencia = "Ninguna"
                 else:
                     hora_entrada = "-"
@@ -67,6 +57,6 @@ def generar_dataset():
     df = pd.DataFrame(data, columns=["empleado_id", "fecha", "dia_semana", "asistencia", "hora_entrada", "hora_salida", "tipo_ausencia"])
 
     # Guardar en CSV
-    df.to_csv("asistencia_empleados.csv", index=False)
-    print("---> Se ha generado el archivo 'asistencia_empleados.csv'")
+    df.to_csv(archivo, index=False)
+    print(f"---> Se ha generado el archivo '{archivo}'")
     return
