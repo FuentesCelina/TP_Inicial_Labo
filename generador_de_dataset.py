@@ -10,7 +10,7 @@ def generar_dataset(archivo):
     # Cantidad de empleados
     CANT_EMPLEADOS = 100
     # Cantidad de días corridos, fecha de inicio, días que no se trabaja
-    CANT_DIAS = 120
+    CANT_DIAS = 180
     FECHAS = pd.date_range(start="2025-01-01", periods=CANT_DIAS)
     DIAS_NO_LABORABLES = ['Saturday', 'Sunday']
 
