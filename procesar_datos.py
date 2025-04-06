@@ -23,16 +23,20 @@ def pre_procesar_datos(archivo):
     df['faltas_acumuladas'] = df.groupby('empleado_id')['asistencia'].transform(lambda x: (x == 0).sum())
     df['faltas_seguidas'] = df.groupby('empleado_id')['asistencia'].transform(lambda x: x.eq(0).astype(int).groupby(x.ne(0).cumsum()).cumsum().max())
     df['falta_lunes_viernes'] = df.apply(lambda row: 1 if row['dia_semana'] in [0, 4] and row['asistencia'] == 0 else 0, axis=1)
-    df['llegada_tarde'] = df['min_entrada'].apply(lambda x: 1 if x > 485 and x != -1 else 0)  # Suponiendo 8:05 AM como horario tope normal de llegada
-    df['retiro_temprano'] = df['min_salida'].apply(lambda x: 1 if x < 1015 and x != -1 else 0)  # Suponiendo 4:55 PM como salida anticipada normal
+    # llegada_tarde ahora contabiliza cuántos minutos tardó
+    df['llegada_tarde'] = df['min_entrada'].apply(lambda x: x - 480 if x > 485 and x != -1 else 0)  # Suponiendo 8:05 AM como horario tope normal de llegada
+    # retiro_temprano ahora contabiliza cuántos minutos se fue antes
+    df['retiro_temprano'] = df['min_salida'].apply(lambda x: 1020 - x if x < 1015 and x != -1 else 0)  # Suponiendo 4:55 PM como salida anticipada normal
 
     # Eliminar características ya procesadas
     df.drop(['fecha', 'dia_semana', 'asistencia', 'hora_entrada', 'hora_salida', 'min_entrada', 'min_salida'], axis = 1, inplace = True)
 
     # Reprocesar nuevas columnas
+    # - suma todas las inasistencias de los lunes y los viernes
+    # - suma todos los minutos no trabajados y los transforma a horas
     df['falta_lunes_viernes'] = df.groupby('empleado_id')['falta_lunes_viernes'].transform(lambda x: (x == 1).sum())
-    df['llegada_tarde'] = df.groupby('empleado_id')['llegada_tarde'].transform(lambda x: (x == 1).sum())
-    df['retiro_temprano'] = df.groupby('empleado_id')['retiro_temprano'].transform(lambda x: (x == 1).sum())
+    df['llegada_tarde'] = (df.groupby('empleado_id')['llegada_tarde'].transform('sum') // 60).astype(int)
+    df['retiro_temprano'] = (df.groupby('empleado_id')['retiro_temprano'].transform('sum') // 60).astype(int)
 
     return df
 
@@ -51,23 +55,61 @@ def resumir_datos_asistencia(df):
 
     return resumen
 
+##def detectar_peores_empleados(df, porcentaje, archivo_destino):
+##    """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
+##
+##    # Seleccionar las características relevantes para el análisis
+##    X = df[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
+##
+##    # Entrenar Isolation Forest para detectar anomalías
+##    model = IsolationForest(contamination = porcentaje / 100, random_state=42)
+##    model.fit(X)
+##
+##    # Obtener las puntuaciones de anomalía
+##    df['anomaly_score'] = model.decision_function(X)
+##
+##    # Seleccionar los empleados con peor score (más negativos son más anómalos)
+##    df_peores = df.nsmallest(porcentaje, 'anomaly_score')
+##
+##    # Guardar el resultado en un nuevo archivo CSV
+##    df_peores.to_csv(archivo_destino, index=False)
+##
+##    print("----> Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+
 def detectar_peores_empleados(df, porcentaje, archivo_destino):
-    """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
+    """
+    Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV.
+    Parámetros:
+    - df: dataFrame a trabajar
+    - porcentaje: porcentaje de empleados a marcar como más anómalos
+    - archivo_destino: ruta del archivo de salida
+    """
+
+    n_estimators = 100
+    max_samples = 256
+    max_features = 1.0
+   # max_depth = 8 # IsolationForest no lo acepta
+    random_state = 42
 
     # Seleccionar las características relevantes para el análisis
     X = df[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
 
-    # Entrenar Isolation Forest para detectar anomalías
-    model = IsolationForest(contamination = porcentaje / 100, random_state=42)
+    # Entrenar Isolation Forest con parámetros ajustables
+    model = IsolationForest(
+        contamination = porcentaje / 100,
+        max_samples = max_samples,
+        max_features = max_features,
+        n_estimators = n_estimators,
+        random_state = random_state
+    )
     model.fit(X)
 
     # Obtener las puntuaciones de anomalía
     df['anomaly_score'] = model.decision_function(X)
 
-    # Seleccionar los empleados con peor score (más negativos son más anómalos)
-    df_peores = df.nsmallest(porcentaje, 'anomaly_score')
+    # Seleccionar los empleados con peor score (más negativos = más anómalos)
+    df_peores = df.nsmallest(int(len(df) * (porcentaje / 100)), 'anomaly_score')
 
-    # Guardar el resultado en un nuevo archivo CSV
+    # Guardar el resultado
     df_peores.to_csv(archivo_destino, index=False)
-
-    print("Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+    print(f"----> Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
