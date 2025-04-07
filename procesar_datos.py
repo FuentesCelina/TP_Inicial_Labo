@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import joblib
 from sklearn.ensemble import IsolationForest
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -57,10 +58,6 @@ def resumir_datos_asistencia(df):
 def detectar_peores_empleados(df, porcentaje, archivo_destino):
     """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
 
-    """# Seleccionar las características relevantes para el análisis
-    features = ['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']
-    X = df[features].copy()  # este es el dataset que usamos para el modelo """
-
     # Entrenar Isolation Forest
     model = IsolationForest(contamination=porcentaje / 100, random_state=42)
     model.fit(df)
@@ -76,12 +73,18 @@ def detectar_peores_empleados(df, porcentaje, archivo_destino):
     # Guardar en CSV
     df_peores.to_csv(archivo_destino, index=False)
 
+    # Guardamos modelo de Isolation
+    joblib.dump(model,'modelo_isolation_forest.pkl')
+
     print(f"✅ Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
 
-    return model, df  # devolvemos también df para graficar
+    return df  # devolvemos también df para graficar
 
-def graficar_anomalias(df, modeloEntrenado):
+
+
+def graficar_anomalias(df, archivo):
     """Grafica las anomalías detectadas con Isolation Forest"""
+    modeloEntrenado=joblib.load(archivo)
     y_pred = modeloEntrenado.predict(df)
 
     # PCA para reducción a 2 dimensiones
