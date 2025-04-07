@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.decomposition import PCA
 
 def pre_procesar_datos(archivo):
     """Carga el dataset de asistencia desde un archivo CSV y lo prepara para el análisis."""
@@ -48,26 +50,50 @@ def resumir_datos_asistencia(df):
 
     resumen.to_csv('resumen_de_asistencia.csv', index=False)
     print("---> Archivo 'resumen_de_asistencia.csv' generado correctamente.")
-
-    return resumen
+    # !!! guardo el archivo de resumen de asistencias y borro id_empleado porque no lo tengo en cuenta para el modelo Isolation forest ni la grafica
+    resumen=resumen[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
+    return resumen 
 
 def detectar_peores_empleados(df, porcentaje, archivo_destino):
     """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
 
-    # Seleccionar las características relevantes para el análisis
-    X = df[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
+    """# Seleccionar las características relevantes para el análisis
+    features = ['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']
+    X = df[features].copy()  # este es el dataset que usamos para el modelo """
 
-    # Entrenar Isolation Forest para detectar anomalías
-    model = IsolationForest(contamination = porcentaje / 100, random_state=42)
-    model.fit(X)
+    # Entrenar Isolation Forest
+    model = IsolationForest(contamination=porcentaje / 100, random_state=42)
+    model.fit(df)
+    
+    ranking=df.copy()
 
-    # Obtener las puntuaciones de anomalía
-    df['anomaly_score'] = model.decision_function(X)
+    # Obtener las puntuaciones de anomalía. No modifico df para que
+    ranking['anomaly_score'] = model.decision_function(df)
 
-    # Seleccionar los empleados con peor score (más negativos son más anómalos)
-    df_peores = df.nsmallest(porcentaje, 'anomaly_score')
+    # Seleccionar los empleados con peor score
+    df_peores = ranking.nsmallest(int(len(ranking) * (porcentaje / 100)), 'anomaly_score')
 
-    # Guardar el resultado en un nuevo archivo CSV
+    # Guardar en CSV
     df_peores.to_csv(archivo_destino, index=False)
 
-    print("Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+    print(f"✅ Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+
+    return model, df  # devolvemos también df para graficar
+
+def graficar_anomalias(df, modeloEntrenado):
+    """Grafica las anomalías detectadas con Isolation Forest"""
+    y_pred = modeloEntrenado.predict(df)
+
+    # PCA para reducción a 2 dimensiones
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(df)
+
+    # Gráfico
+    plt.figure(figsize=(15, 8))
+    plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y_pred, cmap='coolwarm', edgecolors='k')
+    plt.title("Detección de Anomalías con Isolation Forest + PCA")
+    plt.xlabel("PC1")
+    plt.ylabel("PC2")
+    plt.grid(True)
+    plt.show()
+
