@@ -52,7 +52,7 @@ def resumir_datos_asistencia(df):
     resumen.to_csv('resumen_de_asistencia.csv', index=False)
     print("---> Archivo 'resumen_de_asistencia.csv' generado correctamente.")
     # !!! guardo el archivo de resumen de asistencias y borro id_empleado porque no lo tengo en cuenta para el modelo Isolation forest ni la grafica
-    resumen=resumen[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
+    resumen=resumen[['empleado_id','faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
     return resumen 
 
 def detectar_peores_empleados(df,archivo_destino):
@@ -103,7 +103,7 @@ def graficar_anomalias(df, archivo):
     modeloEntrenado=joblib.load(archivo)
     y_pred = modeloEntrenado.predict(df)
 
-    # PCA para reducción a 2 dimensiones
+    # PCA para reducción a 2 dimensiones (matriz de coordenadas)
     pca = PCA(n_components=2)
     X_pca = pca.fit_transform(df)
 
@@ -112,7 +112,7 @@ def graficar_anomalias(df, archivo):
     plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y_pred, cmap='coolwarm', edgecolors='k')
     plt.title("Detección de Anomalías con Isolation Forest + PCA")
     plt.xlabel("PC1") #la verdad no lo pondria, no le aclara nada al cliente verlo, se consiguieron las coordenadas con calculos de combinatoria
-    plt.ylabel("PC2") 
+    plt.ylabel("PC2") #same
     plt.grid(True)
     plt.savefig("deteccion_de_anomalias.png", dpi=300)
     #plt.show() esto es para mostrar, pero nos conviene tenerlo como imagen para poder mostrarlo en la web 
