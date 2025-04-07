@@ -17,7 +17,7 @@ def main():
     df_final = procesar_datos.resumir_datos_asistencia(df_asistencia)
 
     # Detecta el porcentaje con peor cumplimiento
-    procesar_datos.detectar_peores_empleados(df_final, 20, "empleados_mas_incumplidores.csv")
+    df_final= procesar_datos.detectar_peores_empleados(df_final, "empleados_mas_incumplidores.csv")
 
     #Graficar valores normales y anómalos obtenidos
     procesar_datos.graficar_anomalias(df_final,'modelo_isolation_forest.pkl')

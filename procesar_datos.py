@@ -55,20 +55,36 @@ def resumir_datos_asistencia(df):
     resumen=resumen[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
     return resumen 
 
-def detectar_peores_empleados(df, porcentaje, archivo_destino):
+def detectar_peores_empleados(df,archivo_destino):
     """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
+    ranking=df.copy()     
+    #Sacamos mediante el archivo txt lo que nos pidan: qué porcentaje de anomalías y qué tipo de análisis se requiere
+    with open("datos.txt","r") as archivo:
+        datos=archivo.read().splitlines()
+    
+    porcentaje=float(datos[0])
+    mascara=[int(linea) for linea in datos[1:]] 
+
+    atributos_para_isolation=['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']
+
+    # Seleccionar columnas basandose en la mascara
+    columnas_seleccionadas = [col for col, uso in zip(atributos_para_isolation, mascara) if uso == 1]
+    df= df[columnas_seleccionadas]        
 
     # Entrenar Isolation Forest
     model = IsolationForest(contamination=porcentaje / 100, random_state=42)
     model.fit(df)
-    
-    ranking=df.copy()
 
-    # Obtener las puntuaciones de anomalía. No modifico df para que
+    # Obtener las puntuaciones de anomalía. No modifico df
     ranking['anomaly_score'] = model.decision_function(df)
 
     # Seleccionar los empleados con peor score
     df_peores = ranking.nsmallest(int(len(ranking) * (porcentaje / 100)), 'anomaly_score')
+
+    #Filtrar resultados a mostrar en peores_empleados
+
+
+    print(f"el porcentaje de isolation sera '{porcentaje} y las columnas a tratar seran '{columnas_seleccionadas}")
 
     # Guardar en CSV
     df_peores.to_csv(archivo_destino, index=False)
