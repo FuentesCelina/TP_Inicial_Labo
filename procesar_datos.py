@@ -92,8 +92,11 @@ def graficar_anomalias(df, modeloEntrenado):
     plt.figure(figsize=(15, 8))
     plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y_pred, cmap='coolwarm', edgecolors='k')
     plt.title("Detección de Anomalías con Isolation Forest + PCA")
-    plt.xlabel("PC1")
-    plt.ylabel("PC2")
+    plt.xlabel("PC1") #la verdad no lo pondria, no le aclara nada al cliente verlo, se consiguieron las coordenadas con calculos de combinatoria
+    plt.ylabel("PC2") 
     plt.grid(True)
-    plt.show()
+    plt.savefig("deteccion_de_anomalias.png", dpi=300)
+    #plt.show() esto es para mostrar, pero nos conviene tenerlo como imagen para poder mostrarlo en la web 
+
+   
 
