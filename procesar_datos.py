@@ -1,8 +1,11 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import joblib
 from sklearn.ensemble import IsolationForest
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.decomposition import PCA
 
 def pre_procesar_datos(archivo):
     """Carga el dataset de asistencia desde un archivo CSV y lo prepara para el análisis."""
@@ -48,26 +51,71 @@ def resumir_datos_asistencia(df):
 
     resumen.to_csv('resumen_de_asistencia.csv', index=False)
     print("---> Archivo 'resumen_de_asistencia.csv' generado correctamente.")
+    # !!! guardo el archivo de resumen de asistencias y borro id_empleado porque no lo tengo en cuenta para el modelo Isolation forest ni la grafica
+    resumen=resumen[['empleado_id','faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
+    return resumen 
 
-    return resumen
-
-def detectar_peores_empleados(df, porcentaje, archivo_destino):
+def detectar_peores_empleados(df,archivo_destino):
     """Detecta el peor segmento de empleados con asistencia anómala y genera un archivo CSV."""
+    ranking=df.copy()     
+    #Sacamos mediante el archivo txt lo que nos pidan: qué porcentaje de anomalías y qué tipo de análisis se requiere
+    with open("datos.txt","r") as archivo:
+        datos=archivo.read().splitlines()
+    
+    porcentaje=float(datos[0])
+    mascara=[int(linea) for linea in datos[1:]] 
 
-    # Seleccionar las características relevantes para el análisis
-    X = df[['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']]
+    atributos_para_isolation=['faltas_acumuladas', 'faltas_seguidas', 'falta_lunes_viernes', 'llegada_tarde', 'retiro_temprano']
 
-    # Entrenar Isolation Forest para detectar anomalías
-    model = IsolationForest(contamination = porcentaje / 100, random_state=42)
-    model.fit(X)
+    # Seleccionar columnas basandose en la mascara
+    columnas_seleccionadas = [col for col, uso in zip(atributos_para_isolation, mascara) if uso == 1]
+    df= df[columnas_seleccionadas]        
 
-    # Obtener las puntuaciones de anomalía
-    df['anomaly_score'] = model.decision_function(X)
+    # Entrenar Isolation Forest
+    model = IsolationForest(contamination=porcentaje / 100, random_state=42)
+    model.fit(df)
 
-    # Seleccionar los empleados con peor score (más negativos son más anómalos)
-    df_peores = df.nsmallest(porcentaje, 'anomaly_score')
+    # Obtener las puntuaciones de anomalía. No modifico df
+    ranking['anomaly_score'] = model.decision_function(df)
 
-    # Guardar el resultado en un nuevo archivo CSV
+    # Seleccionar los empleados con peor score
+    df_peores = ranking.nsmallest(int(len(ranking) * (porcentaje / 100)), 'anomaly_score')
+
+    #Filtrar resultados a mostrar en peores_empleados
+
+
+    print(f"el porcentaje de isolation sera '{porcentaje} y las columnas a tratar seran '{columnas_seleccionadas}")
+
+    # Guardar en CSV
     df_peores.to_csv(archivo_destino, index=False)
 
-    print("Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+    # Guardamos modelo de Isolation
+    joblib.dump(model,'modelo_isolation_forest.pkl')
+
+    print(f"✅ Se ha generado '{archivo_destino}' con los empleados más incumplidores.")
+
+    return df  # devolvemos también df para graficar
+
+
+
+def graficar_anomalias(df, archivo):
+    """Grafica las anomalías detectadas con Isolation Forest"""
+    modeloEntrenado=joblib.load(archivo)
+    y_pred = modeloEntrenado.predict(df)
+
+    # PCA para reducción a 2 dimensiones (matriz de coordenadas)
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(df)
+
+    # Gráfico
+    plt.figure(figsize=(15, 8))
+    plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y_pred, cmap='coolwarm', edgecolors='k')
+    plt.title("Detección de Anomalías con Isolation Forest + PCA")
+    plt.xlabel("PC1") #la verdad no lo pondria, no le aclara nada al cliente verlo, se consiguieron las coordenadas con calculos de combinatoria
+    plt.ylabel("PC2") #same
+    plt.grid(True)
+    plt.savefig("deteccion_de_anomalias.png", dpi=300)
+    #plt.show() esto es para mostrar, pero nos conviene tenerlo como imagen para poder mostrarlo en la web 
+
+   
+
