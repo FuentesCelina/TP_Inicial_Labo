@@ -1,5 +1,7 @@
 const express = require('express');
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 const router = express.Router();
 
@@ -31,6 +33,8 @@ router.post('/upload-csv', upload.single('csvFile'), (req, res) => {
       return res.status(400).json({ message: 'Faltan datos en la solicitud' });
     }
 
+    generateTxtFile(percentage, columns);
+
     res.status(200).json({
       message: 'Archivo y datos recibidos correctamente',
       fileName: file.originalname,
@@ -43,5 +47,13 @@ router.post('/upload-csv', upload.single('csvFile'), (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
+
+function generateTxtFile(percentage, columns){
+     // Crear archivo datos.txt en ../
+     const outputPath = path.join(__dirname, '../../datos.txt');
+     const content = `${percentage}\n${columns.join('\n')}`;
+     fs.writeFileSync(outputPath, content);
+     console.log('Archivo de salida generado en:', outputPath);
+}
 
 module.exports = router;
