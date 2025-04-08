@@ -58,6 +58,7 @@ function descargar_csv() {
   }
 
 function convertir_csv(data) {
+  const loader = mostrarLoader();
   const csvData = jsonToCSV(data);
 
   const blob = new Blob([csvData], { type: 'text/csv' });
@@ -67,6 +68,7 @@ function convertir_csv(data) {
   link.download = 'datos.csv';
 
   link.click();
+  quitarLoader(loader);
 }
 
 function jsonToCSV(jsonData) {
