@@ -15,19 +15,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var boton = document.getElementById("button_csv");
         boton.style.display = "inline";
-        boton.addEventListener("click", function () {
-        alert("holi");
-        obtenerjson();
-        })
     });
 });
 
-function fetchCSVData() {
+function fetchData(action) {
     fetch("http://localhost:3434/generate")
       .then((response) => response.json())
-      .then((data) => {
-        populateTable(data)})
+      .then(action)
       .catch((error) => console.error("Error fetching data:", error));
+  }
+
+  function fetchCSVData() {
+    fetchData(populateTable);
+  }
+  
+  function descargar_csv() {
+    fetchData(convertir_csv);
   }
   
   function populateTable(data) {
@@ -62,25 +65,15 @@ function fetchCSVData() {
     });
   }
 
-  function obtenerjson() {
-    fetch("http://localhost:3434/generate")
-      .then((response) => response.json())
-      .then((data) => {
-        descargar_csv(data)})
-      .catch((error) => console.error("Error fetching data:", error));
-  }
-function descargar_csv(data) {
-  const csvData = jsonToCSV(data);  // Convertir el JSON a CSV
+function convertir_csv(data) {
+  const csvData = jsonToCSV(data);
 
-  // Crear un Blob (un objeto que representa los datos) con el CSV
   const blob = new Blob([csvData], { type: 'text/csv' });
 
-  // Crear un enlace para la descarga
   const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);  // Crea una URL para el Blob
-  link.download = 'datos.csv';  // Nombre del archivo CSV a descargar
+  link.href = URL.createObjectURL(blob);
+  link.download = 'datos.csv';
 
-  // Simular el clic en el enlace para descargar el archivo
   link.click();
 }
 
