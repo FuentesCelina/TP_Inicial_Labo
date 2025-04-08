@@ -151,27 +151,53 @@
     <svg class="bi mt-5 mb-3" width="48" height="48"><use xlink:href="#check2-circle"/></svg>
     <h1 class="text-body-emphasis"> Isolation Forest Python Script </h1>
     <p class="col-lg-6 mx-auto mb-4">
-      Presiona el botón para aplicar el algoritmo de Isolation Forest y generar un dataset de resultados en formato CSV.
+      Ahora completá los siguientes campos!
     </p>
 
-    <div class="d-flex justify-content-center gap-3 mb-4">
-      <!-- Botón para subir CSV -->
-      <div>
-        <input type="file" id="csvInput" class="d-none" accept=".csv" onchange="uploadCSV()" />
-        <label for="csvInput" class="btn btn-primary mb-0">
-          Subir CSV 📁
-        </label>
-      </div>
+    <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
+      <form id="csvForm" class="mb-4">
+        <div class="row g-3 align-items-center justify-content-center mb-3">
+          <!-- Porcentaje -->
+          <div class="col-auto">
+            <label for="percentage" class="col-form-label">Porcentaje:</label>
+          </div>
+          <div class="col-auto">
+            <input type="number" id="percentage" class="form-control" min="0" max="100" required />
+          </div>
+      
+          <!-- Checkboxes -->
+          <div class="col-12 text-center">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk1" value="1">
+              <label class="form-check-label" for="chk1">Columna 1</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk2" value="1">
+              <label class="form-check-label" for="chk2">Columna 2</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk3" value="1">
+              <label class="form-check-label" for="chk3">Columna 3</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk4" value="1">
+              <label class="form-check-label" for="chk4">Columna 4</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk5" value="1">
+              <label class="form-check-label" for="chk5">Columna 5</label>
+            </div>
+          </div>
 
-      <!-- Botón para ejecutar -->
-      <button  id="runButton" onclick="fetchCSVData()" class="btn btn-primary px-5" type="button">
-        Ejecutar! ⚙️
-      </button>
-
-      <!-- Botón para descargar CSV -->
-      <button id="button_csv" onclick="descargar_csv()" class="btn btn-primary px-5" type="button" style="display: none;">
-        Descargar CSV ⚙️
-      </button>
+          <!-- Carga de archivo y botón de envío -->
+          <div class="col-12 text-center">
+            <input type="file" id="csvInput" class="d-none" accept=".csv" />
+            <label for="csvInput" class="btn btn-primary mb-0 me-2">Subir CSV 📁</label>
+      
+            <button type="button" class="btn btn-success" onclick="enviarFormulario()">Enviar CSV + Datos 🚀</button>
+          </div>
+        </div>
+      </form>
     </div>
 
     <table id="tableData" class="table table-striped mt-3">

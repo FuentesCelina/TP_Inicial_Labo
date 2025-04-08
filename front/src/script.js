@@ -1,26 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const ejecutarBtn = document.querySelector(".btn-primary");
-    
-    ejecutarBtn.addEventListener("click", function () {
-        ejecutarBtn.style.display = "none";
-        
-        // Loader
-        const loader = document.createElement("div");
-        loader.className = "spinner-border text-primary mt-3";
-        loader.setAttribute("role", "status");
-        loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
-        
-        // Sumar loader
-        ejecutarBtn.parentNode.appendChild(loader);
+  const ejecutarBtn = document.getElementById("runButton");
 
-        setTimeout(() => {
+  ejecutarBtn.addEventListener("click", function () {
+      ejecutarBtn.style.display = "none";
+
+      // Loader
+      const loader = document.createElement("div");
+      loader.className = "spinner-border text-primary mt-3";
+      loader.setAttribute("role", "status");
+      loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
+
+      // Agregar el loader al DOM
+      ejecutarBtn.parentNode.appendChild(loader);
+
+      setTimeout(() => {
           // Eliminar el loader después de 3 segundos
           loader.remove();
-        }, 3000);
+      }, 3000);
 
-        var boton = document.getElementById("button_csv");
-        boton.style.display = "inline";
-    });
+      var boton = document.getElementById("button_csv");
+      boton.style.display = "inline";
+  });
 });
 
 function fetchData(action) {
