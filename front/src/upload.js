@@ -19,7 +19,7 @@ function enviarFormulario() {
     formData.append('percentage', percentage);
     formData.append('columns', JSON.stringify(columns)); // mandamos como JSON string
   
-    fetch('http://localhost:3000/upload-csv', {
+    fetch('http://localhost:3434/upload-csv', {
       method: 'POST',
       body: formData
     })
@@ -34,3 +34,24 @@ function enviarFormulario() {
     });
   }
   
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const percentageInput = document.getElementById('percentage');
+    const checkboxes = document.querySelectorAll('.form-check-input');
+    const submitBtn = document.querySelector('button.btn-success');
+  
+    function validarFormulario() {
+      const porcentajeValido = percentageInput.value.trim() !== '' && !isNaN(percentageInput.value);
+      const alMenosUnCheckbox = Array.from(checkboxes).some(checkbox => checkbox.checked);
+  
+      submitBtn.disabled = !(porcentajeValido && alMenosUnCheckbox);
+    }
+  
+    // Escuchar cambios
+    percentageInput.addEventListener('input', validarFormulario);
+    checkboxes.forEach(checkbox => checkbox.addEventListener('change', validarFormulario));
+  
+    // Inicialmente deshabilitado
+    submitBtn.disabled = true;
+  });
