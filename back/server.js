@@ -3,11 +3,16 @@ const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
 const csv = require('csv-parser');
+const uploadRoute = require('./routes/upload');
+
 
 const app = express();
 const PORT = 3434;
 
 app.use(cors()); // CORS
+app.use(express.json());
+app.use('/', uploadRoute);
+
 // Ruta para ejecutar el script Python
 app.get("/generate", (req, res) => {
     parseCSV("./src/empleados_mas_incumplidores.csv")
