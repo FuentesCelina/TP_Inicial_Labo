@@ -3,9 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     
     ejecutarBtn.addEventListener("click", function () {
         ejecutarBtn.style.display = "none";
-        
         var boton = document.getElementById("button_csv");
-        boton.style.display = "inline";
+        boton.style.display = "inline";  
     });
 });
 
