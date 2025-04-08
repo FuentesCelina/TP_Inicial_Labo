@@ -13,6 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Sumar loader
         ejecutarBtn.parentNode.appendChild(loader);
 
+        setTimeout(() => {
+          // Eliminar el loader después de 3 segundos
+          loader.remove();
+        }, 3000);
+
         var boton = document.getElementById("button_csv");
         boton.style.display = "inline";
     });
