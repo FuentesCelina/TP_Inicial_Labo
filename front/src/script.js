@@ -4,36 +4,28 @@ document.addEventListener("DOMContentLoaded", function () {
     ejecutarBtn.addEventListener("click", function () {
         ejecutarBtn.style.display = "none";
         
-        // Loader
-        const loader = document.createElement("div");
-        loader.className = "spinner-border text-primary mt-3";
-        loader.setAttribute("role", "status");
-        loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
-        
-        // Sumar loader
-        ejecutarBtn.parentNode.appendChild(loader);
-
         var boton = document.getElementById("button_csv");
         boton.style.display = "inline";
     });
 });
 
 function fetchData(action) {
-    fetch("http://localhost:3434/generate")
-      .then((response) => response.json())
-      .then(action)
-      .catch((error) => console.error("Error fetching data:", error));
-  }
+  fetch("http://localhost:3434/generate")
+    .then((response) => response.json())
+    .then(action)
+    .catch((error) => console.error("Error fetching data:", error));
+}
 
-  function fetchCSVData() {
-    fetchData(populateTable);
-  }
+function fetchCSVData() {
+  fetchData(populateTable);
+}
   
-  function descargar_csv() {
-    fetchData(convertir_csv);
-  }
+function descargar_csv() {
+  fetchData(convertir_csv);
+}
   
   function populateTable(data) {
+    const loader = mostrarLoader();
     const table = document.getElementById("tableData");
     const tableBody = document.getElementById("table-body");
     
@@ -63,6 +55,7 @@ function fetchData(action) {
   
       tableBody.appendChild(tr);
     });
+    quitarLoader(loader);
   }
 
 function convertir_csv(data) {
@@ -98,4 +91,27 @@ function jsonToCSV(jsonData) {
   });
 
   return csvRows.join('\n'); // Unir todas las filas con saltos de línea
+}
+
+function mostrarLoader(){
+  const ejecutarBtn = document.querySelector(".btn-primary");
+  // Loader
+  const loader = document.createElement("div");
+  loader.className = "spinner-border text-primary mt-3";
+  loader.setAttribute("role", "status");
+  loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
+  
+  // Sumar loader
+  ejecutarBtn.parentNode.appendChild(loader);
+
+  return loader;
+}
+
+function quitarLoader(loader) {
+  if (loader) {
+    setTimeout(() => {
+      // Eliminar el loader después de 3 segundos
+      loader.remove();
+    }, 3000);
+  }
 }
