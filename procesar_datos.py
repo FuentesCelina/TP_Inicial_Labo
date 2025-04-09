@@ -69,7 +69,8 @@ def detectar_peores_empleados(df,archivo_destino):
 
     # Seleccionar columnas basandose en la mascara
     columnas_seleccionadas = [col for col, uso in zip(atributos_para_isolation, mascara) if uso == 1]
-    df= df[columnas_seleccionadas]        
+    df = df[columnas_seleccionadas]
+    df.insert(0, 'empleado_id', ranking['empleado_id'].values) # es necesario identificar al empleado para graficarlo      
 
     # Entrenar Isolation Forest
     model = IsolationForest(contamination=porcentaje / 100, random_state=42)
@@ -116,6 +117,76 @@ def graficar_anomalias(df, archivo):
     plt.grid(True)
     plt.savefig("deteccion_de_anomalias.png", dpi=300)
     #plt.show() esto es para mostrar, pero nos conviene tenerlo como imagen para poder mostrarlo en la web 
+
+def generar_graficos_anomalias(archivo_csv, carpeta_salida, grafico_barras, heatmap):
+    """
+    Genera gráficos de asistencia desde un CSV y los exporta como imágenes PNG para uso en HTML.
+    archivo_csv es el archivo a leer
+    carpeta_salida es la carpeta donde se guardarán los gráficos generados
+    grafico_barra, heatmap son los nombres de los archivos generados
+    Devuelve la cantidad de gráficos que pudo generar (1 o 2)
+    """
+    df_plot = pd.read_csv(archivo_csv)
+
+    if 'empleado_id' not in df_plot.columns:
+        raise Exception("ERROR ----> La columna 'empleado_id' es obligatoria.")
+
+    columnas_metrica = [
+        col for col in df_plot.columns
+        if col not in ['empleado_id', 'anomaly_score'] and np.issubdtype(df_plot[col].dtype, np.number)
+    ]
+
+    nombres_legibles = {
+        'faltas_acumuladas': 'Faltas Totales',
+        'faltas_seguidas': 'Faltas Consecutivas',
+        'falta_lunes_viernes': 'Faltas Lunes/Viernes',
+        'llegada_tarde': 'Llegadas Tarde',
+        'retiro_temprano': 'Retiros Tempranos'
+    }
+
+    renombres_usados = {col: nombres_legibles[col] for col in columnas_metrica if col in nombres_legibles}
+
+    df_plot = df_plot.set_index('empleado_id')
+    df_plot_renombrado = df_plot[columnas_metrica].rename(columns=renombres_usados)
+
+    # Crear carpeta si no existe
+    os.makedirs(carpeta_salida, exist_ok=True)
+
+    # Gráfico de barras
+    plt.figure(figsize=(12, 6))
+    df_plot_renombrado.plot(kind='bar', stacked=True, colormap='Set2', alpha=0.85)
+    plt.title('Empleados con mayor incumplimiento')
+    plt.xlabel('Empleado')
+    plt.ylabel('Inasistencias (días) / Impuntualidades (horas)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.grid(axis='y', linestyle='--', alpha=0.5)
+    plt.legend(loc='upper right')
+
+    barra_path = os.path.join(carpeta_salida, grafico_barras)
+    plt.savefig(barra_path)
+    plt.close()
+
+    print(f" Gráfico de barras guardado en: {barra_path}")
+
+    # Heatmap
+    if len(columnas_metrica) > 1:
+        plt.figure(figsize=(10, 6))
+        sns.heatmap(df_plot_renombrado, cmap='coolwarm', annot=True, fmt='.0f', linewidths=.5)
+        plt.title('Comportamiento de asistencia y puntualidad')
+        plt.ylabel('Empleado')
+        plt.xlabel('Tipo de incumplimiento')
+        plt.tight_layout()
+
+        heatmap_path = os.path.join(carpeta_salida, heatmap)
+        plt.savefig(heatmap_path)
+        plt.close()
+
+        print(f"----> Heatmap guardado en: {heatmap_path}")
+        return 2 # porque generó 2 gráficos
+    else:
+        print("----> No se genera heatmap porque hay menos de 2 métricas.")
+        return 1
 
    
 
