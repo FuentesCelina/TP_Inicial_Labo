@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
       cb(null, 'uploads/'); // Carpeta donde se guarda el archivo
     },
     filename: function (req, file, cb) {
-      const uniqueName = Date.now() + '-' + file.originalname;
+      const uniqueName = 'asistencia_empleados.csv';
       cb(null, uniqueName);
     }
   });
