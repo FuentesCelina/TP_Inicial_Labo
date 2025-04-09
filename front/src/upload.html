@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="../assets/js/color-modes.js"></script>
-    <script src="upload.js"></script>
+    <script src="script.js"></script>
     
 
     <meta charset="utf-8">
@@ -148,7 +148,7 @@
 <div class="container my-5">
   <div class="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-5">
     <svg class="bi mt-5 mb-3" width="48" height="48"><use xlink:href="#check2-circle"/></svg>
-    <h1 class="text-body-emphasis"> Isolation Forest Python Script </h1>
+    <h1 class="text-body-emphasis"> Detección de anomalías con Isolation Forest </h1>
     <p class="col-lg-6 mx-auto mb-4">
       Ahora completá los siguientes campos!
     </p>
@@ -158,7 +158,7 @@
         <div class="row g-3 align-items-center justify-content-center mb-3">
           <!-- Porcentaje -->
           <div class="col-auto">
-            <label for="percentage" class="col-form-label">Anomalías:</label>
+            <label for="percentage" class="col-form-label">Anomalías %</label>
           </div>
           <div class="col-auto">
             <input type="number" id="percentage" class="form-control" min="0" max="100" required />
@@ -168,23 +168,23 @@
           <div class="col-12 text-center">
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="checkbox" id="chk1" value="1">
-              <label class="form-check-label" for="chk1">Columna 1</label>
+              <label class="form-check-label" for="chk1">Faltas acumuladas</label>
             </div>
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="checkbox" id="chk2" value="1">
-              <label class="form-check-label" for="chk2">Columna 2</label>
+              <label class="form-check-label" for="chk2">Faltas seguidas</label>
             </div>
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="checkbox" id="chk3" value="1">
-              <label class="form-check-label" for="chk3">Columna 3</label>
+              <label class="form-check-label" for="chk3">Falta lunes y viernes</label>
             </div>
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="checkbox" id="chk4" value="1">
-              <label class="form-check-label" for="chk4">Columna 4</label>
+              <label class="form-check-label" for="chk4">Llegadas tarde</label>
             </div>
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="checkbox" id="chk5" value="1">
-              <label class="form-check-label" for="chk5">Columna 5</label>
+              <label class="form-check-label" for="chk5">Retiros temprano</label>
             </div>
           </div>
 
@@ -193,7 +193,27 @@
             <input type="file" id="csvInput" class="d-none" accept=".csv" />
             <label for="csvInput" class="btn btn-primary mb-0 me-2">Subir CSV 📁</label>
       
-            <button type="button" class="btn btn-success" onclick="enviarFormulario()">Enviar CSV + Datos 🚀</button>
+            <button type="button" class="btn btn-success" id="runButton" onclick="enviarFormulario()">Enviar CSV + Datos 🚀</button>
+          
+            <p id="resultado"></p>
+
+      <!-- Botón para descargar CSV -->
+      <button id="button_csv" onclick="descargar_csv()" class="btn btn-primary px-5" type="button" style="display: none;">
+        ⚙️ Descargar CSV 
+      </button>
+    </div>
+
+      <table id="tableData" class="table table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Empleado ID</th><th>Faltas acumuladas</th><th>Faltas seguidas</th><th>Falta lunes y viernes</th>
+            <th>Llegada tarde</th><th>Retiro temprano</th>
+            <th>Anomaly Score</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+          
           </div>
         </div>
       </form>

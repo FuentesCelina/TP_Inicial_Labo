@@ -1,41 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const ejecutarBtn = document.getElementById("runButton");
-
-  ejecutarBtn.addEventListener("click", function (event) {
-    event.preventDefault();
-    ejecutarMain();
-      ejecutarBtn.style.display = "none";
-
-      // Loader
-      const loader = document.createElement("div");
-      loader.className = "spinner-border text-primary mt-3";
-      loader.setAttribute("role", "status");
-      loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
-
-      // Agregar el loader al DOM
-      ejecutarBtn.parentNode.appendChild(loader);
-
-      setTimeout(() => {
-          // Eliminar el loader después de 3 segundos
-          loader.remove();
-      }, 3000);
-
-      var boton = document.getElementById("button_csv");
-      boton.style.display = "inline";
-  });
-});
-
-function ejecutarMain() {
-  fetch("http://localhost:3434/ejecutar")
-            .then(response => response.json()) // Convertir la respuesta en JSON
-            .then(data => {
-                console.log(data);
-                document.getElementById("resultado").innerText = data.mensaje; // Mostrar mensaje en HTML
-                alert("El script ha terminado. Ahora ejecutamos esta función.");
-                fetchCSVData();
-            })
-            .catch(error => console.error("Error:", error));
-}
 
 function fetchData(action) {
     fetch("http://localhost:3434/generate")
@@ -116,4 +78,63 @@ function jsonToCSV(jsonData) {
   });
 
   return csvRows.join('\n'); // Unir todas las filas con saltos de línea
+}
+
+
+
+
+
+// UPLOAD.JS ex file
+function enviarFormulario() {
+  const file = document.getElementById('csvInput').files[0];
+  const percentage = parseInt(document.getElementById('percentage').value);
+
+  if (!file) {
+    alert('Seleccioná un archivo CSV primero.');
+    return;
+  }
+
+  // Armar array con los valores de los checkboxes
+  const columns = [];
+  for (let i = 1; i <= 5; i++) {
+    const checked = document.getElementById(`chk${i}`).checked;
+    columns.push(checked ? 1 : 0);
+  }
+
+  const formData = new FormData();
+  formData.append('csvFile', file);
+  formData.append('percentage', percentage);
+  formData.append('columns', JSON.stringify(columns));
+
+  // 🔽 Ocultar botón de enviar y mostrar loader
+  const submitBtn = document.getElementById('runButton');
+  //submitBtn.style.display = 'none';
+
+  const loader = document.createElement("div");
+  loader.className = "spinner-border text-primary mt-3";
+  loader.setAttribute("role", "status");
+  loader.innerHTML = '<span class="visually-hidden">Loading...</span>';
+  submitBtn.parentNode.appendChild(loader);
+
+  fetch('http://localhost:3434/upload-csv', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+
+    // ✅ Mensaje final y ejecución del resto del flujo
+    document.getElementById("resultado").innerText = data.message || "Proceso completado";
+    alert("El script ha terminado. Ahora ejecutamos esta función.");
+    fetchCSVData(); // poblar la tabla
+    document.getElementById("button_csv").style.display = "inline"; // mostrar botón de descarga
+  })
+  .catch(err => {
+    console.error('Error:', err);
+    alert('Error al enviar el formulario');
+  })
+  .finally(() => {
+    loader.remove(); // eliminar el loader
+  });
 }

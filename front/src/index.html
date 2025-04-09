@@ -145,7 +145,7 @@
 <div class="container my-5">
   <div class="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-5">
     <svg class="bi mt-5 mb-3" width="48" height="48"><use xlink:href="#check2-circle"/></svg>
-    <h1 class="text-body-emphasis"> Isolation Forest Python Script </h1>
+    <h1 class="text-body-emphasis"> Detección de anomalías con Isolation Forest </h1>
     <p class="col-lg-6 mx-auto mb-4">
       Presiona el botón para aplicar el algoritmo de Isolation Forest y generar un dataset de resultados en formato CSV.
     </p>
@@ -157,30 +157,8 @@
           📁 Cargar dataset CSV...
         </button>
       </div>
-
-      <!-- Botón para ejecutar -->
-      <button  id="runButton" class="btn btn-primary px-5" type="button">
-        ⚙️ Ejecutar! 
-      </button>
-
-      <p id="resultado"></p>
-
-      <!-- Botón para descargar CSV -->
-      <button id="button_csv" onclick="descargar_csv()" class="btn btn-primary px-5" type="button" style="display: none;">
-        ⚙️ Descargar CSV 
-      </button>
     </div>
 
-    <table id="tableData" class="table table-striped mt-3">
-      <thead>
-        <tr>
-          <th>Empleado ID</th><th>Faltas acumuladas</th><th>Faltas seguidas</th><th>Falta lunes y viernes</th>
-          <th>Llegada tarde</th><th>Retiro temprano</th>
-          <th>Anomaly Score</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
   </div>
 </div>
 
