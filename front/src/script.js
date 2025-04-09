@@ -94,6 +94,11 @@ function enviarFormulario() {
     return;
   }
 
+  if (isNaN(percentage) || percentage < 1 || percentage > 50) {
+    alert('Por favor, ingresá un porcentaje entre 1 y 50.');
+    return;
+  }
+
   // Armar array con los valores de los checkboxes
   const columns = [];
   for (let i = 1; i <= 5; i++) {
