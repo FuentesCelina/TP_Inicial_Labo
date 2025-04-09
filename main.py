@@ -1,8 +1,8 @@
-def main():
+import generador_de_dataset
+import agrega_anomalias
+import procesar_datos
 
-    import generador_de_dataset
-    import agrega_anomalias
-    import procesar_datos
+def main():
 
     # Generar archivo CSV usado como dataset
     generador_de_dataset.generar_dataset("asistencia_empleados.csv")
