@@ -76,7 +76,6 @@ function fetchData(action) {
         <td>${row.falta_lunes_viernes || "N/A"}</td>
         <td>${row.llegada_tarde || "N/A"}</td>
         <td>${row.retiro_temprano || "N/A"}</td>
-        <td>${row.anomalia || "N/A"}</td>
         <td>${row.anomaly_score || "N/A"}</td>
       `;
   
