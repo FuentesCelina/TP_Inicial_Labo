@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   const ejecutarBtn = document.getElementById("runButton");
 
-  ejecutarBtn.addEventListener("click", function () {
+  ejecutarBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    ejecutarMain();
       ejecutarBtn.style.display = "none";
 
       // Loader
@@ -22,6 +24,18 @@ document.addEventListener("DOMContentLoaded", function () {
       boton.style.display = "inline";
   });
 });
+
+function ejecutarMain() {
+  fetch("http://localhost:3434/ejecutar")
+            .then(response => response.json()) // Convertir la respuesta en JSON
+            .then(data => {
+                console.log(data);
+                document.getElementById("resultado").innerText = data.mensaje; // Mostrar mensaje en HTML
+                alert("El script ha terminado. Ahora ejecutamos esta función.");
+                fetchCSVData();
+            })
+            .catch(error => console.error("Error:", error));
+}
 
 function fetchData(action) {
     fetch("http://localhost:3434/generate")

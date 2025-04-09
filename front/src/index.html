@@ -1,10 +1,6 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="../assets/js/color-modes.js"></script>
-    <script src="script.js"></script>
-    <script src="upload.js"></script>
-    
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -163,9 +159,11 @@
       </div>
 
       <!-- Botón para ejecutar -->
-      <button  id="runButton" onclick="fetchCSVData()" class="btn btn-primary px-5" type="button">
+      <button  id="runButton" class="btn btn-primary px-5" type="button">
         ⚙️ Ejecutar! 
       </button>
+
+      <p id="resultado"></p>
 
       <!-- Botón para descargar CSV -->
       <button id="button_csv" onclick="descargar_csv()" class="btn btn-primary px-5" type="button" style="display: none;">
@@ -225,6 +223,7 @@
 
 
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-
+    
+    <script src="script.js"></script>
     </body>
 </html>
