@@ -4,13 +4,14 @@ const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
 const csv = require('csv-parser');
-
+const uploadRoute = require('./routes/upload');
 
 const app = express();
 const PORT = 3434;
 
 
 app.use(cors()); // CORS
+app.use('/', uploadRoute);
 const pythonScriptPath = path.join(__dirname, "src/main.py");
 
 
