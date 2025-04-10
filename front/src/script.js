@@ -31,7 +31,7 @@ function fetchData(action) {
        // Animacion de aparicion del primer reporte
         setTimeout(() => {
           hiddenReport1.classList.add("visible");
-        }, 10);
+        }, 200);
 
         // Ahora el segundo reporte con delay
         hiddenReport2.classList.add("fade-in");
