@@ -106,6 +106,25 @@
 /* End Cards styles */
 
 
-#tableData {
+#tableData, #hiddenReport1, #hiddenReport2 {
   display: none;
 }
+
+
+
+  .carousel-image {
+    width: 800px;
+    height: 600px;
+    object-fit: cover;
+  }
+
+
+  .fade-in {
+    opacity: 0;
+    transition: opacity 1s ease-in;
+    display: inline;
+  }
+  
+  .visible {
+    opacity: 1;
+  }

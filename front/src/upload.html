@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="../assets/js/color-modes.js"></script>
+    <script src="script.js"></script>
+    <script src="https://unpkg.com/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -147,18 +151,130 @@
     <svg class="bi mt-5 mb-3" width="48" height="48"><use xlink:href="#check2-circle"/></svg>
     <h1 class="text-body-emphasis"> Detección de anomalías con Isolation Forest </h1>
     <p class="col-lg-6 mx-auto mb-4">
-      Presiona el botón para aplicar el algoritmo de Isolation Forest y generar un dataset de resultados en formato CSV.
+      Ahora completá los siguientes campos!
     </p>
 
-    <div class="d-flex justify-content-center gap-3 mb-4">
-      <!-- Botón para subir CSV -->
-      <div>
-        <button onclick="window.location.href='upload.html'" class="btn btn-primary mb-0">
-          📁 Cargar dataset CSV...
-        </button>
-      </div>
+    <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
+      <form id="csvForm" class="mb-4">
+        <div class="row g-3 align-items-center justify-content-center mb-3">
+          <!-- Porcentaje -->
+          <div class="col-auto">
+            <label for="percentage" class="col-form-label">Anomalías %</label>
+          </div>
+          <div class="col-auto">
+            <input type="number" id="percentage" name="percentage" class="form-control" min="1" max="100" value="10">
+          </div>
+      
+          <!-- Checkboxes -->
+          <div class="col-12 text-center">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk1" value="1">
+              <label class="form-check-label" for="chk1">Faltas acumuladas</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk2" value="1">
+              <label class="form-check-label" for="chk2">Faltas seguidas</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk3" value="1">
+              <label class="form-check-label" for="chk3">Falta lunes y viernes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk4" value="1">
+              <label class="form-check-label" for="chk4">Llegadas tarde</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="chk5" value="1">
+              <label class="form-check-label" for="chk5">Retiros temprano</label>
+            </div>
+          </div>
+
+          <!-- Carga de archivo y botón de envío -->
+          <div class="col-12 text-center">
+            <input type="file" id="csvInput" class="d-none" accept=".csv" />
+            <label for="csvInput" class="btn btn-primary mb-0 me-2">Subir CSV 📁</label>
+      
+            <button type="button" class="btn btn-success" id="runButton" onclick="enviarFormulario()">Enviar CSV + Datos 🚀</button>
+          
+            <p id="resultado"></p>
+
+      <!-- Botón para descargar CSV -->
+      <button id="button_csv" onclick="descargar_csv()" class="btn btn-primary px-5" type="button" style="display: none;">
+        ⚙️ Descargar CSV 
+      </button>
     </div>
 
+    <div class="bg-dark py-4" id="hiddenReport1">
+      <h2 class="text-center mb-4 text-white">Resultados del análisis de anomalías</h2>
+          <!--- INICIO CAROUSEL IMAGENES -->
+      <div id="carouselZoom" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000" data-bs-pause="hover">
+        <div class="carousel-inner">
+      
+          <!-- Primer gráfico -->
+          <div class="carousel-item active">
+            <img src="../../Gráficas/Barras.png" class="carousel-image img-fluid mx-auto" alt="Gráfico 1" data-bs-toggle="modal" data-bs-target="#zoomModal" onclick="zoomImage(this)">
+          </div>
+      
+          <!-- Segundo gráfico -->
+          <div class="carousel-item">
+            <img src="../../Gráficas/Heatmap.png" class="carousel-image img-fluid mx-auto" alt="Gráfico 2" data-bs-toggle="modal" data-bs-target="#zoomModal" onclick="zoomImage(this)">
+          </div>
+      
+        </div>
+      
+        <!-- Controles -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselZoom" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselZoom" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+      
+      <!-- Modal para zoom -->
+      <div class="modal fade" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+          <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0">
+              <img id="zoomedImage" src="" class="img-fluid w-100" alt="Zoom">
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+    <!--- FIN CAROUSEL IMAGENES  -->
+    <div class="bg-dark py-4" id="hiddenReport2">
+      <h2 class="text-center mb-4 text-white">Reporte de anomalías</h2>
+      <table id="tableData" class="table table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Empleado ID</th><th>Faltas acumuladas</th><th>Faltas seguidas</th><th>Falta lunes y viernes</th>
+            <th>Llegada tarde</th><th>Retiro temprano</th>
+            <th>Anomaly Score</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+          
+          </div>
+        </div>
+      </form>
+    </div>
+
+    
+    <table id="tableData" class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Empleado ID</th><th>Faltas acumuladas</th><th>Faltas seguidas</th><th>Falta lunes y viernes</th>
+          <th>Llegada tarde</th><th>Retiro temprano</th><th>Anomalia</th>
+          <th>Anomaly Score</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
   </div>
 </div>
 
@@ -201,7 +317,6 @@
 
 
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="script.js"></script>
+
     </body>
 </html>
