@@ -17,13 +17,37 @@ function fetchData(action) {
   function populateTable(data) {
     const table = document.getElementById("tableData");
     const tableBody = document.getElementById("table-body");
+    const hiddenReport1 = document.getElementById("hiddenReport1");
+    const hiddenReport2 = document.getElementById("hiddenReport2");
     
     tableBody.innerHTML = "";
   
     if (data.length > 0) {
       table.style.display = "table"; // Mostrar la tabla solo si hay datos
+      
+      hiddenReport1.classList.add("fade-in");
+      hiddenReport1.style.display = "inline";
+
+       // Animacion de aparicion del primer reporte
+        setTimeout(() => {
+          hiddenReport1.classList.add("visible");
+        }, 10);
+
+        // Ahora el segundo reporte con delay
+        hiddenReport2.classList.add("fade-in");
+        hiddenReport2.style.display = "inline";
+        
+        setTimeout(() => {
+          hiddenReport2.classList.add("visible");
+        }, 900);
+          
     } else {
-      table.style.display = "none"; // Ocultar la tabla si no hay datos
+      table.style.display = "none";
+      hiddenReport1.style.display = "none";
+      hiddenReport2.style.display = "none";
+
+      hiddenReport1.classList.remove("fade-in", "visible");
+      hiddenReport2.classList.remove("fade-in", "visible");
     }
   
     data.forEach((row) => {
@@ -131,7 +155,7 @@ function enviarFormulario() {
 
     // ✅ Mensaje final y ejecución del resto del flujo
     document.getElementById("resultado").innerText = data.message || "Proceso completado";
-    alert("El script ha terminado. Ahora ejecutamos esta función.");
+    //alert("El script ha terminado. Ahora ejecutamos esta función.");
     fetchCSVData(); // poblar la tabla
     document.getElementById("button_csv").style.display = "inline"; // mostrar botón de descarga
   })
