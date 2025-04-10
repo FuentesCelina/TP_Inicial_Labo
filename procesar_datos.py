@@ -5,9 +5,6 @@ import seaborn as sns
 import joblib
 import os
 from sklearn.ensemble import IsolationForest
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from sklearn.decomposition import PCA
 
 def pre_procesar_datos(archivo):
     """Carga el dataset de asistencia desde un archivo CSV y lo prepara para el análisis."""
@@ -83,9 +80,7 @@ def detectar_peores_empleados(df,archivo_destino):
 
     # Seleccionar los empleados con peor score
     df_peores = ranking.nsmallest(int(len(ranking) * (porcentaje / 100)), 'anomaly_score')
-
-    #Filtrar resultados a mostrar en peores_empleados
-
+    df_peores.head(int(porcentaje))
 
     print(f"el porcentaje de isolation sera '{porcentaje} y las columnas a tratar seran '{columnas_seleccionadas}")
 
@@ -99,26 +94,6 @@ def detectar_peores_empleados(df,archivo_destino):
 
     return df  # devolvemos también df para graficar
 
-
-
-def graficar_anomalias(df, archivo):
-    """Grafica las anomalías detectadas con Isolation Forest"""
-    modeloEntrenado=joblib.load(archivo)
-    y_pred = modeloEntrenado.predict(df)
-
-    # PCA para reducción a 2 dimensiones (matriz de coordenadas)
-    pca = PCA(n_components=2)
-    X_pca = pca.fit_transform(df)
-
-    # Gráfico
-    plt.figure(figsize=(15, 8))
-    plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y_pred, cmap='coolwarm', edgecolors='k')
-    plt.title("Detección de Anomalías con Isolation Forest + PCA")
-    plt.xlabel("PC1") #la verdad no lo pondria, no le aclara nada al cliente verlo, se consiguieron las coordenadas con calculos de combinatoria
-    plt.ylabel("PC2") #same
-    plt.grid(True)
-    plt.savefig("deteccion_de_anomalias.png", dpi=300)
-    #plt.show() esto es para mostrar, pero nos conviene tenerlo como imagen para poder mostrarlo en la web 
 
 def generar_graficos_anomalias(archivo_csv, carpeta_salida, grafico_barras, heatmap):
     """

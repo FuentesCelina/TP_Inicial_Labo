@@ -1,15 +1,6 @@
-import generador_de_dataset
-import agrega_anomalias
 import procesar_datos
 
 def main():
-
-    # Generar archivo CSV usado como dataset
-    generador_de_dataset.generar_dataset("asistencia_empleados.csv")
-
-    # Al archivo generado, le agrega empleados con asistencia anómala
-    agrega_anomalias.agregar_anomalias("asistencia_empleados.csv")
-
     # Procesar datos
     df_asistencia = procesar_datos.pre_procesar_datos("asistencia_empleados.csv")
 
@@ -22,8 +13,6 @@ def main():
     #Exportar gráficos de los valores anómalos obtenidos
     procesar_datos.generar_graficos_anomalias("empleados_mas_incumplidores.csv", 'Gráficas', 'Barras', 'Heatmap')
     
-    #Graficar valores normales y anómalos obtenidos
-    procesar_datos.graficar_anomalias(df_final,'modelo_isolation_forest.pkl')
   
 if __name__ == '__main__':
     main()
