@@ -143,3 +143,11 @@ function enviarFormulario() {
     loader.remove(); // eliminar el loader
   });
 }
+
+
+// Carousel
+  function zoomImage(imgElement) {
+    const zoomed = document.getElementById('zoomedImage');
+    zoomed.src = imgElement.src;
+    zoomed.alt = imgElement.alt;
+  }

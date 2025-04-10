@@ -109,3 +109,10 @@
 #tableData {
   display: none;
 }
+
+
+  .carousel-image {
+    width: 800px;
+    height: 600px;
+    object-fit: cover;
+  }
